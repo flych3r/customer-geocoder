@@ -1,0 +1,5 @@
+loguru
+django
+django-health-check
+djangorestframework
+drf-yasg
