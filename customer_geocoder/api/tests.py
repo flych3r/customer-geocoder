@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.test.client import Client
+from rest_framework.test import APIClient
 
 from customer_geocoder.api.models import Customer
 
@@ -53,3 +54,143 @@ class CustomerTestCase(TestCase):
 
         self.assertEqual(customer_1.email, 'e@mail.com')
         self.assertEqual(customer_2.email, 'eletronic@mail.com')
+
+    def test_api_get_customers(self):
+        """GET /customer/ returns all customers."""
+        client = APIClient()
+        client.login(username='admin', password='admin')
+        response = client.get('/customers/')
+        resp_json = response.json()
+
+        self.assertEqual(resp_json.get('count'), 2)
+        self.assertEqual(len(resp_json.get('results')), 2)
+
+        customer_1 = resp_json.get('results')[0]
+        customer_2 = resp_json.get('results')[1]
+        self.assertEqual(customer_1.get('first_name'), 'John')
+        self.assertEqual(customer_2.get('first_name'), 'Jane')
+
+        client.logout()
+
+    def test_api_get_customer_id(self):
+        """GET /customer/id/ returns single customer."""
+        client = APIClient()
+        client.login(username='admin', password='admin')
+        response = client.get('/customers/1/')
+        customer_1 = response.json()
+        self.assertEqual(customer_1.get('first_name'), 'John')
+
+        response = client.get('/customers/2/')
+        customer_2 = response.json()
+        self.assertEqual(customer_2.get('first_name'), 'Jane')
+
+        client.logout()
+
+    def test_api_post_customer_valid(self):
+        """POST /customer/ creates new customer if data is valid."""
+        client = APIClient()
+        client.login(username='admin', password='admin')
+        response = client.get('/customers/')
+        resp_json = response.json()
+        before_post = resp_json.get('count')
+
+        response = client.post(
+            '/customers/',
+            data={
+                'first_name': 'Some',
+                'last_name': 'Name',
+                'email': 'some@email.com',
+                'gender': 'Not informed',
+                'company': 'ACME',
+                'city': 'NY',
+                'title': 'Fullstack Dev',
+                'latitude': 90.0,
+                'longitude': -180.0
+            },
+            format='json'
+        )
+        new_customer = response.json()
+
+        response = client.get('/customers/')
+        resp_json = response.json()
+        after_post = resp_json.get('count')
+        self.assertEqual(before_post + 1, after_post)
+
+        response = client.get(f'/customers/{new_customer.get("id")}/')
+        customer = response.json()
+        self.assertEqual(customer.get('first_name'), 'Some')
+
+        client.logout()
+
+    def test_api_post_customer_invalid_email(self):
+        """POST /customer/ creates fails if email is invalid."""
+        client = APIClient()
+        client.login(username='admin', password='admin')
+        response = client.get('/customers/')
+        resp_json = response.json()
+        before_post = resp_json.get('count')
+
+        response = client.post(
+            '/customers/',
+            data={
+                'first_name': 'Some',
+                'last_name': 'Name',
+                'email': 'email',
+                'gender': 'Not informed',
+                'company': 'ACME',
+                'city': 'NY',
+                'title': 'Fullstack Dev',
+                'latitude': 90.0,
+                'longitude': -180.0
+            },
+            format='json'
+        )
+        resp_json = response.json()
+
+        self.assertEqual(resp_json, {'email': ['Enter a valid email address.']})
+
+        response = client.get('/customers/')
+        resp_json = response.json()
+        after_post = resp_json.get('count')
+        self.assertEqual(before_post, after_post)
+
+        client.logout()
+
+    def test_api_post_customer_invalid_lat_lng(self):
+        """POST /customer/ creates fails if latitude, longitude is invalid."""
+        client = APIClient()
+        client.login(username='admin', password='admin')
+        response = client.get('/customers/')
+        resp_json = response.json()
+        before_post = resp_json.get('count')
+
+        response = client.post(
+            '/customers/',
+            data={
+                'first_name': 'Some',
+                'last_name': 'Name',
+                'email': 'some@email.com',
+                'gender': 'Not informed',
+                'company': 'ACME',
+                'city': 'NY',
+                'title': 'Fullstack Dev',
+                'latitude': -180.0,
+                'longitude': 360.0
+            },
+            format='json'
+        )
+        resp_json = response.json()
+        self.assertEqual(
+            resp_json,
+            {
+                'latitude': ['Ensure this value is greater than or equal to -90.0.'],
+                'longitude': ['Ensure this value is less than or equal to 180.0.']
+            }
+        )
+
+        response = client.get('/customers/')
+        resp_json = response.json()
+        after_post = resp_json.get('count')
+        self.assertEqual(before_post, after_post)
+
+        client.logout()
