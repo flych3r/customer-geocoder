@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
@@ -34,8 +35,12 @@ class Customer(models.Model):
     company = models.CharField(max_length=256)
     city = models.CharField(max_length=256)
     title = models.CharField(max_length=256)
-    latitude = models.FloatField(min_value=-90, max_value=90)
-    longitude = models.FloatField(min_value=-180.0, max_value=180.0)
+    latitude = models.FloatField(
+        validators=[MinValueValidator(-90.0), MaxValueValidator(90.0)],
+    )
+    longitude = models.FloatField(
+        validators=[MinValueValidator(-180.0), MaxValueValidator(180.0)],
+    )
 
     def __str__(self):
         """Model name."""
