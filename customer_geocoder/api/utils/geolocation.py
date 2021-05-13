@@ -1,5 +1,6 @@
 import os
 from typing import Dict
+
 import requests
 
 GEOCODING_API_KEY = os.getenv('GEOCODING_API_KEY')

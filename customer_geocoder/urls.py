@@ -17,21 +17,20 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.urls import include, path, re_path
 from django.contrib import admin
-from rest_framework import routers
-from rest_framework import permissions
-from drf_yasg.views import get_schema_view
+from django.urls import include, path, re_path
 from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions, routers
 
 from customer_geocoder.api import views
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Customer Geocoder API",
+        title='Customer Geocoder API',
         default_version='v1',
-        description="Django REST API which provides information about customers",
-        license=openapi.License(name="MIT License"),
+        description='Django REST API which provides information about customers',
+        license=openapi.License(name='MIT License'),
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),

@@ -31,4 +31,3 @@ test: clean
 coverage: clean
 	coverage run -m pytest
 	coverage report
-
