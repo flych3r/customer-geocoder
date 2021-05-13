@@ -1,11 +1,28 @@
 import csv
+from ctypes import Union
+from typing import List
 from django.core.management.base import BaseCommand, CommandError
 from pathlib import Path
 from customer_geocoder.api.models import Customer
 from customer_geocoder.api.utils import geolocation
 
 
-def create_customer(header, customer):
+def create_customer(header: List[str], customer: List[Union[str, float, int]]) -> Customer:
+    """
+    Creates a Customer object from a csv entry.
+
+    Parameters
+    ----------
+    header : list of str
+        csv header, with names of columns
+    customer : list of values
+        csv row with values
+
+    Returns
+    -------
+    Customer
+        customer with geolocated address
+    """
     customer = dict(zip(header, customer))
     lat_lon = geolocation.lat_lng_by_address(customer.get('city'))
     lat_lon['latitude'] = lat_lon.pop('lat')
@@ -15,12 +32,26 @@ def create_customer(header, customer):
 
 
 class Command(BaseCommand):
-    help = 'Adds heroes from csv file'
+    """Django manager command to populate db from a csv file."""
+
+    help = 'Adds customers from csv file'
 
     def add_arguments(self, parser):
+        """Adds file_path to parser."""
         parser.add_argument('file_path', type=Path)
 
     def handle(self, *args, **options):
+        """
+        Handles command.
+
+        Verifies if the path exists. Loads the csv file and create customers from each row.
+        Adds all customers to the db.
+
+        Raises
+        ------
+        ComandError
+            exits if file_path doesnt exists
+        """
         file_path = options['file_path']
         if not file_path.exists():
             raise CommandError(f'File {file_path} not found')
