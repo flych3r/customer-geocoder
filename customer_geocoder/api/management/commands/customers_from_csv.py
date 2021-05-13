@@ -2,13 +2,14 @@ import csv
 from django.core.management.base import BaseCommand, CommandError
 from pathlib import Path
 from customer_geocoder.api.models import Customer
+from customer_geocoder.api.utils import geolocation
 
 
 def create_customer(header, customer):
     customer = dict(zip(header, customer))
-    lat_lon = dict()
-    lat_lon['latitude'] = 0.0
-    lat_lon['longitude'] = 0.0
+    lat_lon = geolocation.lat_lng_by_address(customer.get('city'))
+    lat_lon['latitude'] = lat_lon.pop('lat')
+    lat_lon['longitude'] = lat_lon.pop('lng')
     customer = {**customer, **lat_lon}
     return Customer(**customer)
 
