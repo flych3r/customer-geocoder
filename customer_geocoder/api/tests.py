@@ -1,13 +1,15 @@
+import requests_mock
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.test.client import Client
 from rest_framework.test import APIClient
 
 from customer_geocoder.api.models import Customer
+from customer_geocoder.api.utils.geolocation import lat_lng_by_address
 
 
 class CustomerTestCase(TestCase):
-    """Test cases for Customer model."""
+    """Test cases for Customer model and api."""
 
     def setUp(self):
         """Test cases setup."""
@@ -288,3 +290,17 @@ class CustomerTestCase(TestCase):
         self.assertContains(response, text='', status_code=404)
 
         client.logout()
+
+
+class GeocodeTestCase(TestCase):
+    """Test case for geocoding."""
+
+    @requests_mock.Mocker()
+    def test_lat_lng_by_address(self, mock):
+        """lat_lng_by_address returns dict with lat, lng keys."""
+        mock.get(
+            'https://maps.googleapis.com/maps/api/geocode/json?address=Some+Address',
+            json={'results': [{'geometry': {'location': {'lat': 0.0, 'lng': 0.0}}}]}
+        )
+        lat_lng = lat_lng_by_address('Some Address')
+        self.assertEqual(lat_lng, {'lat': 0.0, 'lng': 0.0})
