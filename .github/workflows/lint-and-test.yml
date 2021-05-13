@@ -1,0 +1,24 @@
+name: Lint and Test
+on: [push]
+
+jobs:
+  build:
+    name: Code Linting and Testing
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7]
+
+    steps:
+    - uses: actions/checkout@main
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@main
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        make env
+    - name: Lint
+      working-directory: ${{ github.workspace }}
+      run: |
+        make lint
