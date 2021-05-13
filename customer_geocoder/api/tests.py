@@ -60,6 +60,7 @@ class CustomerTestCase(TestCase):
         client = APIClient()
         client.login(username='admin', password='admin')
         response = client.get('/customers/')
+        self.assertContains(response, text='', status_code=200)
         resp_json = response.json()
 
         self.assertEqual(resp_json.get('count'), 2)
@@ -77,10 +78,12 @@ class CustomerTestCase(TestCase):
         client = APIClient()
         client.login(username='admin', password='admin')
         response = client.get('/customers/1/')
+        self.assertContains(response, text='', status_code=200)
         customer_1 = response.json()
         self.assertEqual(customer_1.get('first_name'), 'John')
 
         response = client.get('/customers/2/')
+        self.assertContains(response, text='', status_code=200)
         customer_2 = response.json()
         self.assertEqual(customer_2.get('first_name'), 'Jane')
 
@@ -109,6 +112,7 @@ class CustomerTestCase(TestCase):
             },
             format='json'
         )
+        self.assertContains(response, text='', status_code=201)
         new_customer = response.json()
 
         response = client.get('/customers/')
@@ -117,6 +121,7 @@ class CustomerTestCase(TestCase):
         self.assertEqual(before_post + 1, after_post)
 
         response = client.get(f'/customers/{new_customer.get("id")}/')
+        self.assertContains(response, text='', status_code=200)
         customer = response.json()
         self.assertEqual(customer.get('first_name'), 'Some')
 
@@ -145,6 +150,7 @@ class CustomerTestCase(TestCase):
             },
             format='json'
         )
+        self.assertContains(response, text='', status_code=400)
         resp_json = response.json()
 
         self.assertEqual(resp_json, {'email': ['Enter a valid email address.']})
@@ -179,6 +185,7 @@ class CustomerTestCase(TestCase):
             },
             format='json'
         )
+        self.assertContains(response, text='', status_code=400)
         resp_json = response.json()
         self.assertEqual(
             resp_json,
@@ -192,5 +199,92 @@ class CustomerTestCase(TestCase):
         resp_json = response.json()
         after_post = resp_json.get('count')
         self.assertEqual(before_post, after_post)
+
+        client.logout()
+
+    def test_api_put_customer(self):
+        """PUT /customer/id/ replaces customer data."""
+        client = APIClient()
+        client.login(username='admin', password='admin')
+        response = client.get('/customers/')
+        resp_json = response.json()
+        before_put = resp_json.get('count')
+
+        response = client.put(
+            '/customers/1/',
+            data={
+                'first_name': 'Hansel',
+                'last_name': 'Gretel',
+                'email': 'oficial@email.com',
+                'gender': 'Not informed',
+                'company': 'Globex',
+                'city': 'NY',
+                'title': 'CEO',
+                'latitude': 0.0,
+                'longitude': 0.0
+            },
+            format='json'
+        )
+        self.assertContains(response, text='', status_code=200)
+
+        response = client.get('/customers/')
+        resp_json = response.json()
+        after_patch = resp_json.get('count')
+        self.assertEqual(before_put, after_patch)
+
+        response = client.get('/customers/1/')
+        self.assertContains(response, text='', status_code=200)
+        customer = response.json()
+        self.assertEqual(customer.get('company'), 'Globex')
+
+        client.logout()
+
+    def test_api_patch_customer(self):
+        """PATCH /customer/id updates customer data."""
+        client = APIClient()
+        client.login(username='admin', password='admin')
+        response = client.get('/customers/')
+        resp_json = response.json()
+        before_patch = resp_json.get('count')
+
+        response = client.patch(
+            '/customers/1/',
+            data={
+                'company': 'Globex',
+            },
+            format='json'
+        )
+        self.assertContains(response, text='', status_code=200)
+
+        response = client.get('/customers/')
+        resp_json = response.json()
+        after_patch = resp_json.get('count')
+        self.assertEqual(before_patch, after_patch)
+
+        response = client.get('/customers/1/')
+        self.assertContains(response, text='', status_code=200)
+        customer = response.json()
+        self.assertEqual(customer.get('company'), 'Globex')
+
+        client.logout()
+
+    def test_api_delete_customer(self):
+        """DELETE /customer/ removes customer."""
+        client = APIClient()
+        client.login(username='admin', password='admin')
+        response = client.get('/customers/')
+        resp_json = response.json()
+        before_delete = resp_json.get('count')
+
+        response = client.delete('/customers/1/')
+        self.assertContains(response, text='', status_code=204)
+
+        response = client.get('/customers/')
+        resp_json = response.json()
+        after_delete = resp_json.get('count')
+        self.assertEqual(before_delete - 1, after_delete)
+
+        response = client.get('/customers/1/')
+        self.assertContains(response, text='', status_code=404)
 
         client.logout()
