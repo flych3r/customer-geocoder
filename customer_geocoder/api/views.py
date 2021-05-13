@@ -1,5 +1,4 @@
-from rest_framework import viewsets
-from rest_framework import permissions
+from rest_framework import permissions, viewsets
 
 from customer_geocoder.api.models import Customer
 from customer_geocoder.api.serializers import CustomerSerializer

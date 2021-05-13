@@ -1,8 +1,10 @@
 import csv
 from ctypes import Union
-from typing import List
-from django.core.management.base import BaseCommand, CommandError
 from pathlib import Path
+from typing import List
+
+from django.core.management.base import BaseCommand, CommandError
+
 from customer_geocoder.api.models import Customer
 from customer_geocoder.api.utils import geolocation
 
