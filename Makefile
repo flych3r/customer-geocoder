@@ -12,6 +12,10 @@ dev:
 	pre-commit install
 	(command -v gitmoji >/dev/null && gitmoji -i) || echo Please install gitmoji-cli
 
+ci:
+	python -m pip install --upgrade pip
+	pip install flake8 pep8-naming flake8-bugbear flake8-docstrings pytest coverage geopandas
+
 clean:
 	rm -rf `find . -type d -name .pytest_cache`
 	rm -rf `find . -type d -name __pycache__`
