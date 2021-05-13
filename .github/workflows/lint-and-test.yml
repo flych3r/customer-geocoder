@@ -3,7 +3,7 @@ on: [push]
 
 jobs:
   build:
-
+    name: Code Linting and Testing
     runs-on: ubuntu-latest
     strategy:
       matrix:
