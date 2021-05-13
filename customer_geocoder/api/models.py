@@ -36,9 +36,11 @@ class Customer(models.Model):
     city = models.CharField(max_length=256)
     title = models.CharField(max_length=256)
     latitude = models.FloatField(
+        blank=True, null=True,
         validators=[MinValueValidator(-90.0), MaxValueValidator(90.0)],
     )
     longitude = models.FloatField(
+        blank=True, null=True,
         validators=[MinValueValidator(-180.0), MaxValueValidator(180.0)],
     )
 
