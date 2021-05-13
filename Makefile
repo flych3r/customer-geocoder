@@ -7,14 +7,13 @@ help:
 	@echo " - coverage  : runs coverage report"
 	@echo " - doc       : creates documentation in html"
 
-dev:
+env:
+	python -m pip install --upgrade pip
 	pip install -r requirements-dev.txt
+
+dev: env
 	pre-commit install
 	(command -v gitmoji >/dev/null && gitmoji -i) || echo Please install gitmoji-cli
-
-ci:
-	python -m pip install --upgrade pip
-	pip install flake8 pep8-naming flake8-bugbear flake8-docstrings pytest coverage geopandas
 
 clean:
 	rm -rf `find . -type d -name .pytest_cache`
@@ -32,4 +31,3 @@ test: clean
 coverage: clean
 	coverage run -m pytest
 	coverage report
-

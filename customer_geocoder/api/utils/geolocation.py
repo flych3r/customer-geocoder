@@ -1,10 +1,25 @@
 import os
+from typing import Dict
+
 import requests
 
 GEOCODING_API_KEY = os.getenv('GEOCODING_API_KEY')
 
 
-def lat_lng_by_address(address):
+def lat_lng_by_address(address: str) -> Dict[str, float]:
+    """
+    Geolocates and address using Google Maps API.
+
+    Parameters
+    ----------
+    address : str
+        string with the address to be geolocated
+
+    Returns
+    -------
+    dict
+        dictionary with lat and lng keys
+    """
     payload = {
         'address': address,
         'key': GEOCODING_API_KEY

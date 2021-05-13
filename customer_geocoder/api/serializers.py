@@ -4,6 +4,8 @@ from customer_geocoder.api.models import Customer
 
 
 class CustomerSerializer(serializers.HyperlinkedModelSerializer):
+    """API serializer for Customer model."""
+
     class Meta:
         model = Customer
         fields = (
