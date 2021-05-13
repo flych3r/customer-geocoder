@@ -5,7 +5,6 @@ from typing import List, Union
 from django.core.management.base import BaseCommand, CommandError
 
 from customer_geocoder.api.models import Customer
-from customer_geocoder.api.utils.geolocation import lat_lng_by_address
 
 
 def create_customer(header: List[str], customer: List[Union[str, float, int]]) -> Customer:
@@ -25,11 +24,13 @@ def create_customer(header: List[str], customer: List[Union[str, float, int]]) -
         customer with geolocated address
     """
     customer = dict(zip(header, customer))
-    address = f'{customer.get("company")}, {customer.get("city")}'
-    lat_lon = lat_lng_by_address(address)
-    lat_lon['latitude'] = lat_lon.pop('lat')
-    lat_lon['longitude'] = lat_lon.pop('lng')
-    customer = {**customer, **lat_lon}
+    # address = f'{customer.get("company")}, {customer.get("city")}'
+    # lat_lon = lat_lng_by_address(address)
+    # lat_lon['latitude'] = lat_lon.pop('lat')
+    # lat_lon['longitude'] = lat_lon.pop('lng')
+    # customer = {**customer, **lat_lon}
+    customer['latitude'] = customer['latitude'] or None
+    customer['longitude'] = customer['longitude'] or None
     return Customer(**customer)
 
 
