@@ -26,8 +26,8 @@ lint: clean
 	flake8
 
 test: clean
-	pytest --verbose
+	python manage.py test
 
 coverage: clean
-	coverage run -m pytest
+	coverage run --source='.' manage.py test
 	coverage report
