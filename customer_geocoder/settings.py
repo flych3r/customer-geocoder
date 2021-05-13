@@ -57,6 +57,10 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': False
+}
+
 ROOT_URLCONF = 'customer_geocoder.urls'
 
 TEMPLATES = [
