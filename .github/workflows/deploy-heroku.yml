@@ -23,6 +23,7 @@ jobs:
         run: |
           make env
       - name: Lint and Test
+        run: |
           make lint
           make test
           make clean
