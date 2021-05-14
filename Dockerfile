@@ -18,10 +18,10 @@ RUN pip install --disable-pip-version-check --no-cache-dir -r requirements.txt
 
 COPY ./customer_geocoder ./customer_geocoder
 COPY ./manage.py .
+COPY ./files/*.csv .
 
 RUN python manage.py collectstatic --noinput
 
 USER 1001
-
 
 CMD gunicorn customer_geocoder.wsgi:application --bind 0.0.0.0:$PORT
