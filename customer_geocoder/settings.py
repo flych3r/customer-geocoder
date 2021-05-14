@@ -29,13 +29,20 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'super-secret-key')
 DEBUG = bool(os.getenv('DEBUG', True))
 PRODUCTION = bool(os.getenv('PRODUCTION', False))
 
-SESSION_COOKIE_SECURE = PRODUCTION
-CSRF_COOKIE_SECURE = PRODUCTION
-
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 DEPLOY_HOST = os.getenv('DEPLOY_HOST')
 if DEPLOY_HOST:
     ALLOWED_HOSTS.append(DEPLOY_HOST)
+
+if PRODUCTION:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_HSTS_SECONDS = 3600
 
 # Application definition
 
@@ -93,7 +100,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'customer_geocoder.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
