@@ -4,6 +4,7 @@ from django.test import TestCase
 from django.test.client import Client
 from rest_framework.test import APIClient
 
+from customer_geocoder.api.management.commands.customers_from_csv import create_customer
 from customer_geocoder.api.models import Customer
 from customer_geocoder.api.utils.geolocation import lat_lng_by_address
 
@@ -46,7 +47,6 @@ class CustomerTestCase(TestCase):
     def test_all_customers(self):
         """All Customers are in db."""
         customers = Customer.objects.all()
-
         self.assertEqual(len(customers), 2)
 
     def test_get_customer(self):
@@ -304,3 +304,42 @@ class GeocodeTestCase(TestCase):
         )
         lat_lng = lat_lng_by_address('Some Address')
         self.assertEqual(lat_lng, {'lat': 0.0, 'lng': 0.0})
+
+
+class CommandTestCase(TestCase):
+    """Test custom command to populate db."""
+
+    @requests_mock.Mocker()
+    def test_create_customer(self, mock):
+        """create_customer adds latitude, longitude to customer."""
+        header = [
+            'id', 'first_name', 'last_name', 'email',
+            'gender', 'company', 'city', 'title'
+        ]
+        customer_values = [
+            1, 'John', 'Doe', 'e@mail.com', 'Male',
+            'ACME', 'NY', 'Frontend Dev'
+        ]
+        customer_dict = {
+            'id': 1,
+            'first_name': 'John',
+            'last_name': 'Doe',
+            'email': 'e@mail.com',
+            'gender': 'Male',
+            'company': 'ACME',
+            'city': 'NY',
+            'title': 'Frontend Dev',
+            'latitude': None,
+            'longitude': None
+        }
+        customer = create_customer(header, customer_values, geocode=False)
+        self.assertEqual(customer, Customer(**customer_dict))
+
+        mock.get(
+            'https://maps.googleapis.com/maps/api/geocode/json?address=ACME%2C+NY',
+            json={'results': [{'geometry': {'location': {'lat': 0.0, 'lng': 0.0}}}]}
+        )
+        customer_dict['latitude'] = 0.0
+        customer_dict['longitude'] = 0.0
+        customer = create_customer(header, customer_values, geocode=True)
+        self.assertEqual(customer, Customer(**customer_dict))
