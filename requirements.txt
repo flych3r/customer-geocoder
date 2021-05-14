@@ -1,8 +1,8 @@
-loguru
 django
 djangorestframework
-drf-yasg
-psycopg2
-gunicorn
 dj-database-url
+drf-yasg
+gunicorn
+loguru
+psycopg2
 whitenoise

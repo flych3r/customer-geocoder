@@ -35,6 +35,7 @@ if DEPLOY_HOST:
     ALLOWED_HOSTS.append(DEPLOY_HOST)
 
 if PRODUCTION:
+    # https://stackoverflow.com/questions/56936036/how-to-fix-mixed-content-error-in-swagger
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True

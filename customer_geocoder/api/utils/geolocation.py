@@ -33,5 +33,5 @@ def lat_lng_by_address(address: str) -> Dict[str, float]:
     location = {'lat': None, 'lng': None}
     if results:
         location = results[0].get('geometry').get('location')
-    logger.debug(f'{address}: {location}')
+    logger.info(f'{address}: {location}')
     return location

@@ -3,8 +3,13 @@
     "python.linting.flake8Enabled": true,
     "python.linting.enabled": true,
     "cSpell.words": [
+        "Postgresql",
+        "createsuperuser",
         "doesnt",
+        "geocode",
+        "geocoded",
         "getenv",
+        "makemigrations",
         "redoc",
         "yasg"
     ]
