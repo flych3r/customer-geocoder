@@ -7,6 +7,7 @@ Django REST API which provides information about customers. Built with Django Re
 ## Development
 
 - If using vscode, a `devcontainer` configuration for local development is available.
+- To use the `postgresql` container, set the env var `DATABASE_URL` as `postgres://postgres:postgres@db:5432/postgres`
 - The geocoding method uses the `Google Maps API`. To setup the API KEY, visit: <https://developers.google.com/maps/documentation/geocoding/overview>
 
 ## Deploy
@@ -36,6 +37,7 @@ Now that the app was created, we can populate the database
   - To use the geocoding method, set the GEOCODING_API_KEY env var: `$ heroku config:set GEOCODING_API_KEY=<your-api-key>`
   - Now run, the command, it will take a few seconds: `$ heroku run python manage.py customers_from_csv customers.csv --geocode`
 
+The swagger interface for the app will be available at `<app-url>/swagger/`
 After setting up everything, `Github Actions` will take care of deploying your app on new releases
 
 Create the following secrets in your github repo:
