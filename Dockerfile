@@ -17,8 +17,8 @@ COPY ./requirements.txt .
 RUN pip install --disable-pip-version-check --no-cache-dir -r requirements.txt
 
 COPY ./customer_geocoder ./customer_geocoder
-COPY ./manage.py .
-COPY ./files/*.csv .
+COPY ./manage.py ./
+COPY ./files/*.csv ./
 
 RUN python manage.py collectstatic --noinput
 
