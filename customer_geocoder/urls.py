@@ -28,7 +28,7 @@ from customer_geocoder.api import views
 schema_view = get_schema_view(
     openapi.Info(
         title='Customer Geocoder API',
-        default_version='v1',
+        default_version='0.1.0',
         description='Django REST API which provides information about customers',
         license=openapi.License(name='MIT License'),
     ),

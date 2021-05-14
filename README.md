@@ -36,7 +36,7 @@ Now that the app was created, we can populate the database
   - To use the geocoding method, set the GEOCODING_API_KEY env var: `$ heroku config:set GEOCODING_API_KEY=<your-api-key>`
   - Now run, the command, it will take a few seconds: `$ heroku run python manage.py customers_from_csv customers.csv --geocode`
 
-After setting up everything, `Github Actions` will take care of deploying your app when pushing to the `main branch`
+After setting up everything, `Github Actions` will take care of deploying your app on new releases
 
 Create the following secrets in your github repo:
 
